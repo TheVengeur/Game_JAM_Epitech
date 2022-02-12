@@ -5,10 +5,9 @@
 */
 
 #include <iostream>
-#include <fstream>
 
 #include "utils.hpp"
-#include "Session.hpp"
+#include "Pascal.hpp"
 
 int main(int argc, char *argv[]) try
 {
@@ -19,23 +18,9 @@ int main(int argc, char *argv[]) try
     else
         srandom(time(nullptr));
 
-    std::ifstream inputFile;
+    qPUG::Pascal game;
+    game.start("questions");
 
-    for (const std::string &filePath : getFiles("questions")) {
-        qPUG::Session session(filePath);
-        session.printAllQuestions();
-        session.loadQuestions();
-        for (std::size_t idx = 0; idx < qPUG::Session::questionsPerSession; idx++) {
-            std::cout << session[idx].question;
-            for (std::size_t jdx = 0; jdx < session[idx].propositions.size(); jdx++) {
-                if (jdx == session[idx].answer) {
-                    std::cout << " \033[32m" << session[idx].propositions[jdx] << "\033[0m";
-                } else
-                    std::cout << " " << session[idx].propositions[jdx];
-            }
-            std::cout << std::endl;
-        }
-    }
     return (0);
 } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << std::endl;

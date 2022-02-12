@@ -9,7 +9,7 @@ SRC		=	$(wildcard src/*.cpp)
 OBJ		=	$(SRC:.cpp=.o)
 
 INCLUDE		=	-I ./include
-CPPFLAGS	=	-W -Wall -Wextra $(INCLUDE) -std=c++17
+CPPFLAGS	=	-W -Wall -Wextra $(INCLUDE) -std=c++17 -lsfml-graphics -lsfml-system -lsfml-window
 
 CC		=	g++
 NAME		=	qPUG

@@ -106,6 +106,37 @@ void Session::loadQuestions(void)
     }
 }
 
+void Session::cleanQuestions(void)
+{
+    for (Session::Question &q : this->_questions) {
+        q.question.clear();
+        q.answer = 0;
+        q.propositions.clear();
+    }
+}
+
+
+
+std::string Session::getPath(void)
+{
+    return (this->_fPath);
+}
+
+std::string Session::getFont(void)
+{
+    return (this->_font);
+}
+
+std::string Session::getLanguage(void)
+{
+    return (this->_language);
+}
+
+std::string Session::getComment(void)
+{
+    return (this->_comment);
+}
+
 
 
 Session::Question Session::operator[](std::size_t idx)

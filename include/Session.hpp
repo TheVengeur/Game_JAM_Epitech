@@ -33,6 +33,12 @@ class Session
 
         void printAllQuestions(void);
         void loadQuestions(void);
+        void cleanQuestions(void);
+
+        std::string getPath(void);
+        std::string getFont(void);
+        std::string getLanguage(void);
+        std::string getComment(void);
 
         Session::Question operator[](std::size_t idx);
 
@@ -41,15 +47,15 @@ class Session
         void loadSessionData(void);
         void seekg(const std::streampos &n);
 
-        std::string                                                     _error;
-        const std::string                                              &_fPath;
-        std::string                                                     _font;
-        std::string                                                     _language;
-        std::string                                                     _comment;
-        std::streampos                                                  _questionsStart;
-        std::ifstream                                                   _fStream;
-        std::size_t                                                     _totalQuestions;
-        std::array<Session::Question, Session::questionsPerSession>     _questions;
+        std::string                                                 _error;
+        std::string                                                 _fPath;
+        std::string                                                 _font;
+        std::string                                                 _language;
+        std::string                                                 _comment;
+        std::streampos                                              _questionsStart;
+        std::ifstream                                               _fStream;
+        std::size_t                                                 _totalQuestions;
+        std::array<Session::Question, Session::questionsPerSession> _questions;
 };
 
 }; /* namespace qPUG */
