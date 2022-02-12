@@ -8,6 +8,7 @@
 #include "utils.hpp"
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 namespace qPUG
 {
@@ -94,6 +95,12 @@ void Session::loadQuestions(void)
             qBuff.answer = static_cast<std::size_t>(*reinterpret_cast<unsigned int *>(&tmp[1][0]));
             for (std::size_t idx = 2; idx < tmp.size(); idx++)
                 qBuff.propositions.push_back(tmp[idx]);
+            buff = qBuff.propositions[qBuff.answer];
+            std::shuffle(qBuff.propositions.begin(), qBuff.propositions.end(), std::default_random_engine(std::random_device()()));
+            for (std::size_t idx = 0; idx < qBuff.propositions.size(); idx++) {
+                if (qBuff.propositions[idx] == buff)
+                    qBuff.answer = idx;
+            }
             for (std::size_t idx = 0; idx < Session::questionsPerSession; idx++) {
                 if (qSortedIndexes[qIndex] == qIndexes[idx]) {
                     this->_questions[idx] = qBuff;

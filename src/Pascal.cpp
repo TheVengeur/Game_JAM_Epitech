@@ -8,6 +8,8 @@
 
 #include <filesystem>
 #include <iostream>
+#include <locale>
+#include <codecvt>
 
 namespace qPUG
 {
@@ -20,6 +22,12 @@ static inline bool endsWith(const std::string &string, const std::string &suffix
 static inline std::string mkPath(const std::string &dir, const std::string &file)
 {
     return (dir + "/" + file);
+}
+
+static inline std::wstring toWString(const std::string &src)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return (converter.from_bytes(src));
 }
 
 
@@ -69,22 +77,22 @@ void Pascal::start(const std::string &dirPath)
         }
         if (this->_state == Pascal::State::Menu) {
             text.setPosition(0, 0);
-            text.setString(this->_files[idx]->getPath());
+            text.setString(toWString(this->_files[idx]->getPath()));
             window.draw(text);
             text.setPosition(0, text.getPosition().y + text.getLocalBounds().top + text.getLocalBounds().height);
-            text.setString(this->_files[idx]->getLanguage());
+            text.setString(toWString(this->_files[idx]->getLanguage()));
             window.draw(text);
             text.setPosition(0, text.getPosition().y + text.getLocalBounds().top + text.getLocalBounds().height);
-            text.setString(this->_files[idx]->getComment());
+            text.setString(toWString(this->_files[idx]->getComment()));
             window.draw(text);
             validated = false;
         } else if (this->_state == Pascal::State::Playing) {
             text.setPosition(0, 0);
-            text.setString((*this->_files[idx])[this->_curQ].question);
+            text.setString(toWString((*this->_files[idx])[this->_curQ].question));
             window.draw(text);
             for (std::size_t jdx = 0; jdx < (*this->_files[idx])[this->_curQ].propositions.size(); jdx++) {
                 text.setPosition(0, text.getPosition().y + text.getLocalBounds().top + text.getLocalBounds().height);
-                text.setString((*this->_files[idx])[this->_curQ].propositions[jdx]);
+                text.setString(toWString((*this->_files[idx])[this->_curQ].propositions[jdx]));
                 if (answer == jdx)
                     text.setFillColor(sf::Color::Green);
                 window.draw(text);
@@ -98,7 +106,7 @@ void Pascal::start(const std::string &dirPath)
             }
         } else if (this->_state == Pascal::State::Score) {
             text.setPosition(0, 0);
-            text.setString(std::to_string(score));
+            text.setString(toWString(std::to_string(score)));
             window.draw(text);
         }
         window.display();
