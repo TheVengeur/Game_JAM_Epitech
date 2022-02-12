@@ -1,0 +1,5 @@
+*qPUG*
+*.o
+.vscode
+.idea
+*a.out*
