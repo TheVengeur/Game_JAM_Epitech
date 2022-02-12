@@ -7,6 +7,7 @@
 #include "Session.hpp"
 #include "utils.hpp"
 #include <iostream>
+#include <algorithm>
 
 namespace qPUG
 {
@@ -40,7 +41,7 @@ void Session::printAllQuestions(void)
     std::string buff;
     std::vector<std::string> tmp;
 
-    this->_fStream.seekg(this->_questionsStart);
+    this->seekg(this->_questionsStart);
     while (!this->_fStream.eof()) {
         std::getline(this->_fStream, buff);
         tmp = split(buff, "\a");
@@ -53,6 +54,63 @@ void Session::printAllQuestions(void)
         }
         std::cout << std::endl;
     }
+}
+
+
+
+void Session::loadQuestions(void)
+{
+    std::array<std::size_t, Session::questionsPerSession> qIndexes;
+    std::array<std::size_t, Session::questionsPerSession> qSortedIndexes;
+    std::string buff;
+    std::vector<std::string> tmp;
+    bool valid = true;
+    std::size_t qIndex = 0;
+    std::size_t question = 0;
+    Session::Question qBuff;
+
+    for (std::size_t idx = 0; idx < Session::questionsPerSession; idx++) {
+        qIndexes[idx] = random() % this->_totalQuestions;
+        do {
+            valid = true;
+            for (std::size_t jdx = 0; jdx < idx; jdx++) {
+                if (qIndexes[idx] == qIndexes[jdx]) {
+                    valid = false;
+                    qIndexes[idx] = (qIndexes[idx] + 1) % this->_totalQuestions;
+                }
+            }
+        } while (!valid);
+    }
+    qSortedIndexes = qIndexes;
+    std::sort(qSortedIndexes.begin(), qSortedIndexes.end());
+
+    this->seekg(this->_questionsStart);
+    while (question <= qSortedIndexes[Session::questionsPerSession - 1]) {
+        std::getline(this->_fStream, buff);
+        if (question == qSortedIndexes[qIndex]) {
+            tmp = split(buff, "\a");
+            qBuff.propositions.clear();
+            qBuff.question = tmp[0];
+            qBuff.answer = static_cast<std::size_t>(*reinterpret_cast<unsigned int *>(&tmp[1][0]));
+            for (std::size_t idx = 2; idx < tmp.size(); idx++)
+                qBuff.propositions.push_back(tmp[idx]);
+            for (std::size_t idx = 0; idx < Session::questionsPerSession; idx++) {
+                if (qSortedIndexes[qIndex] == qIndexes[idx]) {
+                    this->_questions[idx] = qBuff;
+                    break;
+                }
+            }
+            qIndex++;
+        }
+        question++;
+    }
+}
+
+
+
+Session::Question Session::operator[](std::size_t idx)
+{
+    return (this->_questions[idx]);
 }
 
 
@@ -116,10 +174,7 @@ void Session::loadSessionData(void)
     std::string buff;
     std::vector<std::string> tmp;
 
-    this->_fStream.clear();
-    this->_fStream.seekg(0);
-    if (this->_fStream.fail())
-        throw (std::runtime_error("How fuck"));
+    this->seekg(0);
     std::getline(this->_fStream, buff);
     tmp = split(buff, "\a");
     this->_font = tmp[1];
@@ -128,10 +183,10 @@ void Session::loadSessionData(void)
     this->_questionsStart = this->_fStream.tellg();
 }
 
-void Session::loadQuestions(void)
+void Session::seekg(const std::streampos &n)
 {
-    std::array<std::size_t, Session::questionsPerSession> qIndexes;
-    this->_fStream.seekg(this->_questionsStart);
+    this->_fStream.clear();
+    this->_fStream.seekg(n);
 }
 
 }; /* namespace qPUG */

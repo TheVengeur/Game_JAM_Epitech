@@ -31,12 +31,15 @@ class Session
         Session(const std::string &fPath);
         ~Session() = default;
 
-        void printAllQuestions();
+        void printAllQuestions(void);
+        void loadQuestions(void);
+
+        Session::Question operator[](std::size_t idx);
 
     private:
         std::size_t fileChecker(void);
         void loadSessionData(void);
-        void loadQuestions(void);
+        void seekg(const std::streampos &n);
 
         std::string                                                     _error;
         const std::string                                              &_fPath;

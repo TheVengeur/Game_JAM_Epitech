@@ -24,6 +24,17 @@ int main(int argc, char *argv[]) try
     for (const std::string &filePath : getFiles("questions")) {
         qPUG::Session session(filePath);
         session.printAllQuestions();
+        session.loadQuestions();
+        for (std::size_t idx = 0; idx < qPUG::Session::questionsPerSession; idx++) {
+            std::cout << session[idx].question;
+            for (std::size_t jdx = 0; jdx < session[idx].propositions.size(); jdx++) {
+                if (jdx == session[idx].answer) {
+                    std::cout << " \033[32m" << session[idx].propositions[jdx] << "\033[0m";
+                } else
+                    std::cout << " " << session[idx].propositions[jdx];
+            }
+            std::cout << std::endl;
+        }
     }
     return (0);
 } catch (const std::exception &e) {
