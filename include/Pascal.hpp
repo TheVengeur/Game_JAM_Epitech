@@ -19,6 +19,8 @@ class Pascal
     public:
         static const std::string &dFont;
         static const std::string &dRes;
+        static constexpr unsigned int scrWidth = 800;
+        static constexpr unsigned int scrHeight = 600;
 
         enum State
         {

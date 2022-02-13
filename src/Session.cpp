@@ -173,6 +173,7 @@ std::size_t Session::fileChecker(void)
     }
     tmp = split(buff, "\a");
     if (tmp.size() != 3 || tmp[0] != "qPUG") {
+        std::cout << tmp.size() << "'" << (tmp[0] == "qPUG") << "'" << std::endl;
         this->_error = "file has a malformated header";
         return (Session::fileError);
     }

@@ -46,10 +46,38 @@ Pascal::Pascal(void) :
 
 
 
+void justifyText(sf::Text &text, unsigned int bBoxWidth, unsigned int bBoxHeight)
+{
+    if (text.getLocalBounds().left + text.getLocalBounds().width < bBoxWidth &&
+        text.getLocalBounds().top + text.getLocalBounds().height < bBoxHeight)
+        return;
+    if (text.getLocalBounds().left + text.getLocalBounds().width >= bBoxWidth) {
+        for (std::size_t idx = 0; idx < text.getString().getSize(); idx++) {
+            if (text.findCharacterPos(idx).x + text.getFont()->getGlyph(text.getString()[idx], text.getCharacterSize(), false).bounds.width >= bBoxWidth) {
+                sf::String str = text.getString();
+                str[str.toWideString().find_last_of(' ', idx)] = '\n';
+                text.setString(str);
+            }
+        }
+    }
+    if (text.getLocalBounds().top + text.getLocalBounds().height >= bBoxHeight && text.getCharacterSize() > 5) {
+        sf::String str = text.getString();
+        for (sf::Uint32 &c : str) {
+            if (c == '\n')
+                c = ' ';
+        }
+        text.setString(str);
+        text.setCharacterSize(text.getCharacterSize() - 5);
+        justifyText(text, bBoxWidth, bBoxHeight);
+    }
+}
+
+
+
 void Pascal::start(const std::string &dirPath)
 {
     this->getFiles(dirPath);
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Question pour un Gorille");
+    sf::RenderWindow window(sf::VideoMode(Pascal::scrWidth, Pascal::scrHeight), "Question pour un Gorille");
 
     sf::Text text;
     text.setFont(this->_mFont);
@@ -86,10 +114,13 @@ void Pascal::start(const std::string &dirPath)
             text.setString(toWString(this->_files[idx]->getComment()));
             window.draw(text);
             validated = false;
+            score = 0;
         } else if (this->_state == Pascal::State::Playing) {
             text.setPosition(0, 0);
             text.setString(toWString((*this->_files[idx])[this->_curQ].question));
+            justifyText(text, Pascal::scrWidth, Pascal::scrHeight);
             window.draw(text);
+            text.setCharacterSize(30);
             for (std::size_t jdx = 0; jdx < (*this->_files[idx])[this->_curQ].propositions.size(); jdx++) {
                 text.setPosition(0, text.getPosition().y + text.getLocalBounds().top + text.getLocalBounds().height);
                 text.setString(toWString((*this->_files[idx])[this->_curQ].propositions[jdx]));
