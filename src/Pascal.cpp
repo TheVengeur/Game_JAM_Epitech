@@ -152,8 +152,10 @@ void Pascal::getFiles(const std::string &dirPath)
     std::filesystem::path p(dirPath);
 
     for (const std::filesystem::directory_entry &dir_entry : std::filesystem::directory_iterator(p)) {
-        if (dir_entry.is_regular_file() && endsWith(dir_entry.path(), ".qPUG"))
+        if (dir_entry.is_regular_file() && endsWith(dir_entry.path(), ".qPUG")) {
             this->_files.push_back(std::make_unique<qPUG::Session>(dir_entry.path()));
+            this->_files.back()->printAllQuestions();
+        }
     }
 }
 
