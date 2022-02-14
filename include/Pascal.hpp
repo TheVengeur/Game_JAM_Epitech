@@ -19,6 +19,11 @@ class Pascal
     public:
         static const std::string &dFont;
         static const std::string &dRes;
+        static const std::string &dPasc;
+        static const std::string &dBg;
+        static const std::string &dQBox;
+        static const std::string &dABox;
+
         static constexpr unsigned int scrWidth = 800;
         static constexpr unsigned int scrHeight = 600;
 

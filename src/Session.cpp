@@ -28,7 +28,7 @@ static inline std::vector<std::string> split(std::string s, const std::string &d
 }
 
 Session::Session(const std::string &fPath) :
-    _fPath(fPath), _totalQuestions(this->fileChecker())
+    _fPath(fPath.substr(0, fPath.size() - 5).substr(fPath.find_first_of('/') + 1)), _totalQuestions(this->fileChecker())
 {
     if (this->_totalQuestions == Session::fileError)
         throw (std::runtime_error(fPath + " isn't a valid qPUG file: " + this->_error));
@@ -46,7 +46,7 @@ void Session::printAllQuestions(void)
     while (!this->_fStream.eof()) {
         std::getline(this->_fStream, buff);
         tmp = split(buff, "\a");
-        std::cout << tmp[0];
+        std::cout << tmp.size() - 2 << " " << tmp[0];
         for (std::size_t idx = 2; idx < tmp.size(); idx++) {
             if (idx - 2 == static_cast<std::size_t>(*reinterpret_cast<unsigned int *>(&tmp[1][0]))) {
                 std::cout << " \033[32m" << tmp[idx] << "\033[0m";
@@ -159,9 +159,9 @@ std::size_t Session::fileChecker(void)
     std::vector<std::string> tmp;
     std::size_t questions = 0;
 
-    this->_fStream.open(this->_fPath);
+    this->_fStream.open("questions/" + this->_fPath + ".qPUG");
     if (!this->_fStream.is_open())
-        throw (std::runtime_error("Could not open " + this->_fPath));
+        throw (std::runtime_error("Could not open questions/" + this->_fPath + ".qPUG"));
     if (this->_fStream.eof()) {
         this->_error = "file is empty";
         return (Session::fileError);
@@ -187,7 +187,7 @@ std::size_t Session::fileChecker(void)
         if (buff.length() == 0 || buff[0] == '#')
             continue;
         tmp = split(buff, "\a");
-        if (tmp.size() < 4) {
+        if (tmp.size() < 4 || tmp.size() > 6) {
             this->_error = "'" + tmp[0] + "' isn't a valid question";
             return (Session::fileError);
         }

@@ -10,7 +10,7 @@ delete_ary_elmt() {
 	return $status # return 0 if something was deleted; 1 if not
 }
 
-if (( ${#@} <= 3 )); then
+if (( ${#@} < 3 )); then
 	echo "Usage: $0 question validAnswer answers"
 	exit 0
 fi
