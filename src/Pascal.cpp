@@ -233,13 +233,13 @@ void Pascal::hEventPlaying(sf::Event &event, std::size_t &answer, bool &validate
 {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-            answer = (answer + propositions.size() - propositions.size() / 2) % propositions.size();
+            answer = (answer + propositions.size() + 2) % propositions.size();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
             answer = (answer + 2) % propositions.size();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-            answer = (answer / 2) + (answer + 1) % 2;
+            answer = ((answer / 2) * 2) + ((answer + 1) % 2);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-            answer = (answer + 3) % 2;
+            answer = ((answer / 2) * 2) + ((answer + 3) % 2);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
             validated = true;
     }
